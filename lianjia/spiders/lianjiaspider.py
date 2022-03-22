@@ -28,13 +28,23 @@ class LianjiaspiderSpider(RedisSpider):
             around = temp.xpath('.//div[@class="resblock-location"]/a/text()').extract_first()
             item['resblock_location'] = location1 if location1 else "" + '-' + location2 if location2 else "" + '-' + around if around else ""
             item['resblock_room'] = temp.xpath('.//a[@class="resblock-room"]/span/text()').extract()
+            str_room = ''
+            for room in item['resblock_room']:
+                str_room = str_room+room+','
+            item['resblock_room'] = str_room
             item['resblock_area'] = temp.xpath('.//div[@class="resblock-area"]/span/text()').extract_first()
+            item['resblock_area'] = item['resblock_area'].replace(' ', '') if item['resblock_area'] else''
             item['resblock_tag'] = temp.xpath('.//div[@class="resblock-tag"]/span/text()').extract()
+            str_tag = ''
+            for tag in item['resblock_tag']:
+                str_tag = str_tag + tag + ','
+            item['resblock_tag'] = str_tag
             item['resblock_price'] = temp.xpath('.//div[@class="main-price"]/span[@class="number"]/text()').extract_first() + r'元/㎡(均价)'
             item['resblock_second'] = temp.xpath('.//div[@class="second"]/text()').extract_first()
             detail_url = temp.xpath('.//div[@class="resblock-name"]/a/@href').extract_first()
             item['detail_url'] = urllib.parse.urljoin(response.url, detail_url)
-            print(item)
+            # print(item)
+            yield item
 
         # 一种处理js翻页的方法
         # 抓取的当前也永远是1
@@ -51,5 +61,5 @@ class LianjiaspiderSpider(RedisSpider):
                 yield scrapy.Request(
                     url='https://' + response.url.split('/')[2] + '/' + response.url.split('/')[3] + '/pg{}/'.format(int(current_page_num) + count),
                     callback=self.parse)
-                print('url=', 'https://' + response.url.split('/')[2] + '/' + response.url.split('/')[3] + '/pg{}/'.format(int(current_page_num) + count))
+                # print('url=', 'https://' + response.url.split('/')[2] + '/' + response.url.split('/')[3] + '/pg{}/'.format(int(current_page_num) + count))
                 count += 1

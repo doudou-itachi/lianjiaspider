@@ -10,7 +10,7 @@ from scrapy import signals
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 
-from lianjia.settings import USER_AGENT_LIST
+from lianjia.settings import USER_AGENT_LIST, IP_PROXY_URL
 
 
 class RandomProxy(object):
@@ -41,7 +41,7 @@ class RandomProxy(object):
     def update_proxy(self):
         if not self.current_proxy or self.current_proxy.blacked:
             # 豌豆生成的api,但是太慢了
-            url = r'http://http.tiqu.letecs.com/getip3?num=52&type=1&pro=350000&city=350100&yys=0&port=1&time=1&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions=&gm=4'
+            url = IP_PROXY_URL
             response = requests.get(url=url)
             data_dict = random.choice(response.text.split()).split(':')
             # print(data_dict)
